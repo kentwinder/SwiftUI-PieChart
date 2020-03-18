@@ -19,7 +19,9 @@ class PieChartData: ObservableObject {
         
         for index in 0..<data.count {
             let slide = SlideData()
-            slide.data = DataItem(name: "Data name \(index + 1)", value: data[index])
+            let dataItem = DataItem(name: "Data name \(index + 1)", value: data[index])
+            dataItem.highlighted = index == 3
+            slide.data = dataItem
             
             let percentage = data[index] / total * 100
             slide.annotation = String(format: "%.1f%", percentage)
@@ -33,38 +35,34 @@ class PieChartData: ObservableObject {
             let deltaX = CGFloat(cos(abs(alpha).truncatingRemainder(dividingBy: 90.0) * .pi / 180.0))
             let deltaY = CGFloat(sin(abs(alpha).truncatingRemainder(dividingBy: 90.0) * .pi / 180.0))
             var padding: CGFloat = 0.0
-            if index == 3 {
+            var paddingX: CGFloat = 0.0
+            var paddingY: CGFloat = 0.0
+            if slide.data.highlighted {
                 padding = 0.15
-                let paddingX = deltaX * 20.0
-                let paddingY = deltaY * 20.0
-                
-                if -90 <= alpha && alpha < 0 {
-                    slide.deltaX = paddingX
-                    slide.deltaY = -paddingY
-                } else if 0 <= alpha && alpha < 90 {
-                    slide.deltaX = paddingX
-                    slide.deltaY = paddingY
-                } else if 90 <= alpha && alpha < 180 {
-                    slide.deltaX = -paddingY
-                    slide.deltaY = paddingX
-                } else {
-                    slide.deltaX = -paddingX
-                    slide.deltaY = -paddingY
-                }
+                paddingX = deltaX * 20.0
+                paddingY = deltaY * 20.0
             }
             
             let annotationDeltaX = deltaX * (0.7 + padding)
             let annotationDeltaY = deltaY * (0.7 + padding)
             if -90 <= alpha && alpha < 0 {
+                slide.deltaX = paddingX
+                slide.deltaY = -paddingY
                 slide.annotationDeltaX = annotationDeltaX
                 slide.annotationDeltaY = -annotationDeltaY
             } else if 0 <= alpha && alpha < 90 {
+                slide.deltaX = paddingX
+                slide.deltaY = paddingY
                 slide.annotationDeltaX = annotationDeltaX
                 slide.annotationDeltaY = annotationDeltaY
             } else if 90 <= alpha && alpha < 180 {
+                slide.deltaX = -paddingY
+                slide.deltaY = paddingX
                 slide.annotationDeltaX = -annotationDeltaY
                 slide.annotationDeltaY = annotationDeltaX
             } else {
+                slide.deltaX = -paddingX
+                slide.deltaY = -paddingY
                 slide.annotationDeltaX = -annotationDeltaX
                 slide.annotationDeltaY = -annotationDeltaY
             }
