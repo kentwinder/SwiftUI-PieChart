@@ -13,6 +13,9 @@ class ContentViewModel: ObservableObject {
     @Published var pieChartData = PieChartData(data: [Double]())
     
     func randomData() {
+        // reset view
+        pieChartData = PieChartData(data: [Double]())
+        
         let number = Int.random(in: 3...7)
         var values: [Double] = []
         for _ in 0..<number {
